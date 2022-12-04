@@ -1023,7 +1023,7 @@ InitLists( )
 
 		glPushMatrix();
 		glTranslatef(0.0, -0.6, -0.5);
-		glColor3f(10., 0.0, 0.0);
+		glColor3f(0.8, 0.0, 0.0);
 		OsuSphere(0.4, 100.0, 100.0);
 		glPopMatrix();
 
@@ -1156,14 +1156,56 @@ InitLists( )
 		glEnd();
 
 		glBegin(GL_LINE_STRIP);
-		glColor3f(-0.5, 0.5, 0.5);
+			glColor3f(0.5, 0.5, 0.5);
 		glVertex3f(-0.4, 0.9, -1.25);
 		glVertex3f(-0.4, 0.9, -1.0);
 		glVertex3f(-0.4, 0.6, -1.0);
 		glVertex3f(-0.4, 0.6, -1.25);
-
 		glEnd();
-	
+	//======GUN BARREL======================================================
+		glBegin(GL_QUAD_STRIP);
+		glColor3f(0.3, 0.3, 0.3);
+		glVertex3f(-0.1, -0.75, -0.5);
+		glVertex3f(-0.06, -0.65, 4.0);
+		glVertex3f(0.1, -0.75, -0.5);
+		glVertex3f(0.06, -0.65, 4.0);
+		glVertex3f(0.1, -0.5, -0.5);
+		glVertex3f(0.06, -0.5, 4.0);
+		glVertex3f(-0.1, -0.5, -0.5);
+		glVertex3f(-0.06, -0.5, 4.0);
+		glVertex3f(-0.1, -0.75, -0.5);
+		glVertex3f(-0.06, -0.65, 4.0);
+		glEnd();
+
+//==============headlights!======================================================
+		glBegin(GL_TRIANGLES);
+		glColor3f(0.4, 0.4, 0.4);
+		glVertex3f(0.3, 0.4, 0.0);
+		glVertex3f(0.3, 0.1, -0.3);
+		glVertex3f(0.4, 0.1, 0.0);
+		glVertex3f(0.3, 0.4, 0.0);
+		glVertex3f(0.3, 0.1, -0.3);
+		glVertex3f(0.1, 0.1, 0.0);
+
+		glVertex3f(-0.3, 0.4, 0.0);
+		glVertex3f(-0.3, 0.1, -0.3);
+		glVertex3f(-0.4, 0.1, 0.0);
+		glVertex3f(-0.3, 0.4, 0.0);
+		glVertex3f(-0.3, 0.1, -0.3);
+		glVertex3f(-0.1, 0.1, 0.0);
+		glEnd();
+
+		glPushMatrix();
+		glTranslatef(0.29, 0.25, -0.01);
+		glColor3f(1.0, 1.0, 0.0);
+		OsuSphere(0.05, 100.0, 100.0);
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslatef(-0.29, 0.25, -0.01);
+		glColor3f(1.0, 1.0, 0.0);
+		OsuSphere(0.05, 100.0, 100.0);
+		glPopMatrix();
 
 	glEndList( );
 
