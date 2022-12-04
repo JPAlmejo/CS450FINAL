@@ -764,7 +764,7 @@ InitLists( )
 
 		//========nose cone================================
 		glBegin( GL_TRIANGLE_FAN );
-			glColor3f( 1.0, 0.15, .15 ); //B
+			glColor3f( 0.9, 0.0, .0 ); //B
 					glVertex3f(0.0, 0.0,  2.5 );
 					glVertex3f(0.0, 0.5, 0.0);
 					glVertex3f(-0.5, 0.0, 0.0);
@@ -775,7 +775,7 @@ InitLists( )
 
 	//==============body===========================
 		glBegin(GL_QUAD_STRIP);
-			glColor3f(1.0, .16, .16);
+			glColor3f(0.9, .1, .1);
 				glVertex3f(-0.5, 0.0, 0.0);
 				glVertex3f(-0.5, 0.0, -1.0);
 				glVertex3f(0.0, 0.5, 0.0);
@@ -786,6 +786,15 @@ InitLists( )
 				glVertex3f(0.0, -0.5, -1.0);
 				glVertex3f(-0.5, 0.0, 0.0);
 				glVertex3f(-0.5, 0.0, -1.0);
+		glEnd();
+
+		glBegin(GL_QUADS);
+			//back of body
+			glColor3f(1.0, 0.1, .1);
+				glVertex3f(-0.5, 0.0, -1.0);
+				glVertex3f(0.0, 0.5, -1.0);
+				glVertex3f(0.5, 0.0, -1.0);
+				glVertex3f(0.0, -0.5, -1.0);
 		glEnd();
 
 	//================left wing==================================
@@ -1012,38 +1021,150 @@ InitLists( )
 				glVertex3f(-1.0, 0.5, -2.0);
 		glEnd();
 
+		glPushMatrix();
 		glTranslatef(0.0, -0.6, -0.5);
 		glColor3f(10., 0.0, 0.0);
 		OsuSphere(0.4, 100.0, 100.0);
+		glPopMatrix();
 
-		glTranslatef(0.0, 1.1, -1.5);
+
+		glPushMatrix();
+		glTranslatef(0.0, 0.5, -2.0);
 		glColor3f(0.27, 0.27, 0.27);
 		OsuSphere(0.6, 100.0, 100.0);
-
+		glPopMatrix();
 		//OsuCone(0.25, 0.0, 10.0, 100, 10);
 	//===============Engine!==================
+		//sides
 		glBegin(GL_QUAD_STRIP);
 			glColor3f(0.3, .3, .3);
-				glVertex3f(0.5, -5.0, 1.0);
-				glVertex3f(0.5, -5.0, -0.5);
-				glVertex3f(0.5, -4.0, 1.0);
-				glVertex3f(0.5, -4.0, -0.5);
-
-				glVertex3f(-0.5, -4.0, 1.0);
-				glVertex3f(-0.5, -4.0, -0.5);
-				glVertex3f(-0.5, -5.0, 1.0);
-				glVertex3f(-0.5, -5.0, -0.5);
-				glVertex3f(0.5, -5.0, 1.0);
-				glVertex3f(0.5, -5.0, -0.5);;
-
-
-				
-
-
-
-
-		
+				glVertex3f(0.0, 0.3, -2.75);
+				glVertex3f(0.0, 0.75, -3.75);
+				glVertex3f(0.3, 0.0, -2.75);
+				glVertex3f(0.75, 0.0, -3.75);
+				glVertex3f(0.0, -0.3, -2.75);
+				glVertex3f(0.0, -0.75, -3.75);
+				glVertex3f(-0.3, 0.0, -2.75);
+				glVertex3f(-0.75, 0.0, -3.75);
+				glVertex3f(0.0, 0.3, -2.75);
+				glVertex3f(0.0, 0.75, -3.75);
 		glEnd();
+
+		//burner
+		glBegin(GL_QUADS);
+			glColor3f(0.0, 0.5, 0.8);
+				glVertex3f(0.0, 0.75, -3.75);
+				glVertex3f(0.75, 0.0, -3.75);
+				glVertex3f(0.0, -0.75, -3.75);
+				glVertex3f(-0.75, 0.0, -3.75);
+		glEnd();
+		//balljoint
+		glPushMatrix();
+		glTranslatef(0.0, 0.35, -2.75);
+		glColor3f(0.27, 0.27, 0.27);
+		OsuSphere(0.2, 100.0, 100.0);
+		glPopMatrix();
+		//thruster shield
+		glBegin(GL_QUAD_STRIP);
+			glColor3f(0.9, 0.0, .0);
+				glVertex3f(-1.0, 0.25, -3.25);
+				glVertex3f(-1.0, 0.25, -3.75);
+				glVertex3f(-1.0, -0.25, -3.25);
+				glVertex3f(-1.0, -0.25, -3.75);
+				glVertex3f(-0.25, -1.0, -3.25);
+				glVertex3f(-0.25, -1.0, -3.75);
+				glVertex3f(0.25, -1.0, -3.25);
+				glVertex3f(0.25, -1.0, -3.75);
+				glVertex3f(1.0, -0.25, -3.25);
+				glVertex3f(1.0, -0.25, -3.75);
+				glVertex3f(1.0, 0.25, -3.25);
+				glVertex3f(1.0, 0.25, -3.75);
+				glVertex3f(0.25, 1.0, -3.25);
+				glVertex3f(0.25, 1.0, -3.75);
+				glVertex3f(-0.25, 1.0, -3.25);
+				glVertex3f(-0.25, 1.0, -3.75);
+				glVertex3f(-1.0, 0.25, -3.25);
+				glVertex3f(-1.0, 0.25, -3.75);
+		glEnd();
+		//thruster supports
+		glBegin(GL_QUADS);
+		glColor3f(0.5, 0.5, 0.5);
+		glVertex3f(-1.0, 0.0, -3.25);
+		glVertex3f(-1.0, 0.0, -3.75);
+		glVertex3f(1.0, 0.0, -3.25);
+		glVertex3f(1.0, 0.0, -3.75);
+
+		glEnd();
+		//shield fins
+		glBegin(GL_TRIANGLES);
+			glColor3f(0.8, 0.0, .0);
+			glVertex3f(-0.1, 1.0, -3.75);
+			glVertex3f(0.0, 1.25, -3.75);
+			glVertex3f(0.1, 1.0, -3.75);
+			glVertex3f(-0.1, 1.0, -3.75);
+			glVertex3f(0.0, 1.25, -3.75);
+			glVertex3f(0.0, 1.0, -3.5);
+			glVertex3f(0.1, 1.0, -3.75);
+			glVertex3f(0.0, 1.25, -3.75);
+			glVertex3f(0.0, 1.0, -3.5);
+			glVertex3f(-0.1, -1.0, -3.75);
+			glVertex3f(0.0, -1.25, -3.75);
+			glVertex3f(0.1, -1.0, -3.75);
+			glVertex3f(-0.1, -1.0, -3.75);
+			glVertex3f(0.0, -1.25, -3.75);
+			glVertex3f(0.0, -1.0, -3.5);
+			glVertex3f(0.1, -1.0, -3.75);
+			glVertex3f(0.0, -1.25, -3.75);
+			glVertex3f(0.0, -1.0, -3.5);
+		glEnd();
+
+	//==============COCKPIT shield==========================
+
+		glPushMatrix();
+		glTranslatef(0.0, 0.75, -2.0);
+		glColor3f(0.8, 0.5, 0.0);
+		OsuSphere(0.6, 100.0, 100.0);
+		glPopMatrix();
+
+		//shield braces
+
+		glLineWidth(8);
+		glBegin(GL_LINE_STRIP);
+			glColor3f(0.25, 0.25, 0.25);
+				glVertex3f(0.35, 1.0, -1.5);
+				glVertex3f(0.35, 1.3, -1.75);
+				glVertex3f(0.35, 1.3, -2.25);
+				glVertex3f(0.35, 1.0, -2.5);
+		glEnd();
+
+
+		glBegin(GL_LINE_STRIP);
+			glColor3f(0.25, 0.25, 0.25);
+				glVertex3f(-0.35, 1.0, -1.5);
+				glVertex3f(-0.35, 1.3, -1.75);
+				glVertex3f(-0.35, 1.3, -2.25);
+				glVertex3f(-0.35, 1.0, -2.5);
+		glEnd();
+
+		glBegin(GL_LINE_STRIP);
+			glColor3f(0.5, 0.5, 0.5);
+				glVertex3f(0.4, 0.9, -1.25);
+				glVertex3f(0.4, 0.9, -1.0);
+				glVertex3f(0.4, 0.6, -1.0);
+				glVertex3f(0.4, 0.6, -1.25);
+
+		glEnd();
+
+		glBegin(GL_LINE_STRIP);
+		glColor3f(-0.5, 0.5, 0.5);
+		glVertex3f(-0.4, 0.9, -1.25);
+		glVertex3f(-0.4, 0.9, -1.0);
+		glVertex3f(-0.4, 0.6, -1.0);
+		glVertex3f(-0.4, 0.6, -1.25);
+
+		glEnd();
+	
+
 	glEndList( );
 
 
