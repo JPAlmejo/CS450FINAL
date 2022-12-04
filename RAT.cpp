@@ -16,6 +16,10 @@
 #include <GL/glu.h>
 #include "glut.h"
 #include "osusphere.cpp"
+//light sources
+//light global
+bool Light0On, Light1On, Light2On;
+
 
 //=============Animate===============================
 //for animate functions
@@ -163,6 +167,7 @@ const GLfloat Colors[ ][3] =
 	{ 1., 1., 1. },		// white
 	{ 0., 0., 0. },		// black
 };
+float White[3] = { 1., 1., 1. };
 
 // fog parameters:
 
@@ -238,7 +243,14 @@ void			Cross(float[3], float[3], float[3]);
 float			Dot(float [3], float [3]);
 float			Unit(float [3], float [3]);
 
+void	SetMaterial(float, float, float, float);
+void	SetPointLight(int, float, float, float, float, float, float);
+void	SetSpotLight(int, float, float, float, float, float, float, float, float, float);
 
+float* Array3(float, float, float);
+float* Array4(float, float, float, float);
+float* BlendArray3(float, float[3], float[3]);
+float* MulArray3(float, float[3]);
 // main program:
 
 int
@@ -423,12 +435,17 @@ Display( )
 
 	glEnable( GL_NORMALIZE );
 
+	// 	//============Point light========================================================================
 
+	glPopMatrix();
+	//=========Point Light End==============================================================================
 	//======SHIP===========================================================
+	glPushMatrix();
 	glCallList( ship );
+	glPopMatrix();
 	//===== Stars =========================================================
 	//T
-		
+	glPushMatrix();
 		int x = 10;
 		for (int y = 36; y < 1500; y++)
 		{
@@ -453,7 +470,8 @@ Display( )
 
 			x++;
 		}
-
+	glPopMatrix();
+		glDisable(GL_LIGHTING);
 #ifdef DEMO_Z_FIGHTING
 	if( DepthFightingOn != 0 )
 	{
@@ -1433,6 +1451,7 @@ MouseMotion( int x, int y )
 void
 Reset( )
 {
+	Light0On = Light1On = Light2On = false;
 	ActiveButton = 0;
 	AxesOn = 1;
 	DebugOn = 0;
@@ -1445,6 +1464,7 @@ Reset( )
 	WhichProjection = PERSP;
 	Xrot = Yrot = 0.;
 	whichView = outside;
+	
 }
 
 
@@ -1930,4 +1950,100 @@ Unit(float vin[3], float vout[3])
 		vout[2] = vin[2];
 	}
 	return dist;
+
+
 }
+void
+SetMaterial(float r, float g, float b, float shininess)
+{
+	glMaterialfv(GL_BACK, GL_EMISSION, Array3(0., 0., 0.));
+	glMaterialfv(GL_BACK, GL_AMBIENT, MulArray3(.4f, White));
+	glMaterialfv(GL_BACK, GL_DIFFUSE, MulArray3(1., White));
+	glMaterialfv(GL_BACK, GL_SPECULAR, Array3(0., 0., 0.));
+	glMaterialf(GL_BACK, GL_SHININESS, 5.f);
+
+	glMaterialfv(GL_FRONT, GL_EMISSION, Array3(0., 0., 0.));
+	glMaterialfv(GL_FRONT, GL_AMBIENT, Array3(r, g, b));
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, Array3(r, g, b));
+	glMaterialfv(GL_FRONT, GL_SPECULAR, MulArray3(.8f, White));
+	glMaterialf(GL_FRONT, GL_SHININESS, shininess);
+}
+
+void
+SetPointLight(int ilight, float x, float y, float z, float r, float g, float b)
+{
+	glLightfv(ilight, GL_POSITION, Array3(x, y, z));
+	glLightfv(ilight, GL_AMBIENT, Array3(0., 0., 0.));
+	glLightfv(ilight, GL_DIFFUSE, Array3(r, g, b));
+	glLightfv(ilight, GL_SPECULAR, Array3(r, g, b));
+	glLightf(ilight, GL_CONSTANT_ATTENUATION, 1.);
+	glLightf(ilight, GL_LINEAR_ATTENUATION, 0.);
+	glLightf(ilight, GL_QUADRATIC_ATTENUATION, 0.);
+	glEnable(ilight);
+}
+
+
+void
+SetSpotLight(int ilight, float x, float y, float z, float xdir, float ydir, float zdir, float r, float g, float b)
+{
+	glLightfv(ilight, GL_POSITION, Array3(x, y, z));
+	glLightfv(ilight, GL_SPOT_DIRECTION, Array3(xdir, ydir, zdir));
+	glLightf(ilight, GL_SPOT_EXPONENT, 1.);
+	glLightf(ilight, GL_SPOT_CUTOFF, 45.);
+	glLightfv(ilight, GL_AMBIENT, Array3(0., 0., 0.));
+	glLightfv(ilight, GL_DIFFUSE, Array3(r, g, b));
+	glLightfv(ilight, GL_SPECULAR, Array3(r, g, b));
+	glLightf(ilight, GL_CONSTANT_ATTENUATION, 1.);
+	glLightf(ilight, GL_LINEAR_ATTENUATION, 0.);
+	glLightf(ilight, GL_QUADRATIC_ATTENUATION, 0.);
+	glEnable(ilight);
+}
+
+float*
+Array3(float a, float b, float c)
+{
+	static float array[4];
+
+	array[0] = a;
+	array[1] = b;
+	array[2] = c;
+	array[3] = 1.;
+	return array;
+}
+
+float*
+Array4(float a, float b, float c, float d)
+{
+	static float array[4];
+
+	array[0] = a;
+	array[1] = b;
+	array[2] = c;
+	array[3] = d;
+	return array;
+}
+
+float*
+BlendArray3(float factor, float array0[3], float array1[3])
+{
+	static float array[4];
+
+	array[0] = factor * array0[0] + (1.f - factor) * array1[0];
+	array[1] = factor * array0[1] + (1.f - factor) * array1[1];
+	array[2] = factor * array0[2] + (1.f - factor) * array1[2];
+	array[3] = 1.;
+	return array;
+}
+
+float*
+MulArray3(float factor, float array0[3])
+{
+	static float array[4];
+
+	array[0] = factor * array0[0];
+	array[1] = factor * array0[1];
+	array[2] = factor * array0[2];
+	array[3] = 1.;
+	return array;
+}
+//========================================================================
