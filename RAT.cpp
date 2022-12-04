@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <iostream>
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -15,7 +16,16 @@
 #include <GL/glu.h>
 #include "glut.h"
 #include "osusphere.cpp"
-//#include "osucone.h"
+
+//=============Animate===============================
+//for animate functions
+float position = 0;
+float Time;
+//global timer variable for blades
+#define MS_IN_THE_ANIMATION_CYCLE	10000
+//================================================
+
+
 //	This is a sample OpenGL / GLUT program
 //
 //	The objective is to draw a 3d object and change the color of the axes
@@ -87,6 +97,12 @@ enum Projections
 {
 	ORTHO,
 	PERSP
+};
+//which view
+enum View
+{
+	inside,
+	outside
 };
 
 // which button:
@@ -182,6 +198,7 @@ int		WhichColor;				// index into Colors[ ]
 int		WhichProjection;		// ORTHO or PERSP
 int		Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;				// rotation angles in degrees
+int		whichView;
 
 
 // function prototypes:
@@ -280,6 +297,10 @@ Animate( )
 
 	glutSetWindow( MainWindow );
 	glutPostRedisplay( );
+	position++;
+	int ms = glutGet(GLUT_ELAPSED_TIME);	// milliseconds
+	ms %= MS_IN_THE_ANIMATION_CYCLE;
+	Time = (float)ms / (float)MS_IN_THE_ANIMATION_CYCLE;        // [ 0., 1. )
 }
 
 
@@ -332,6 +353,18 @@ Display( )
 	else
 		gluPerspective( 70.f, 1.f,	0.1f, 1000.f );
 
+	//inside outside view
+	if (whichView == inside)
+	{
+		gluLookAt(0.f, 1.5, -1.75   ,   0.f, 0.f, 6.f   ,    0.f, 1.f, 0.f);
+	}
+	else 
+	{
+		// set the eye position, look-at position, and up-vector:
+		glPushMatrix();
+		gluLookAt(0.f, 0.f, 3.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f);
+		glPopMatrix;
+	}
 
 	// place the objects into the scene:
 
@@ -339,22 +372,25 @@ Display( )
 	glLoadIdentity( );
 
 
-	// set the eye position, look-at position, and up-vector:
+	
 
-	gluLookAt( 0.f, 0.f, 3.f,     0.f, 0.f, 0.f,     0.f, 1.f, 0.f );
 
 
 	// rotate the scene:
 
-	glRotatef( (GLfloat)Yrot, 0.f, 1.f, 0.f );
-	glRotatef( (GLfloat)Xrot, 1.f, 0.f, 0.f );
-
+	// rotate the scene:
+	if (whichView == outside) {
+		glRotatef((GLfloat)Yrot, 0.f, 1.f, 0.f);
+		glRotatef((GLfloat)Xrot, 1.f, 0.f, 0.f);
+	};
 
 	// uniformly scale the scene:
 
-	if( Scale < MINSCALE )
-		Scale = MINSCALE;
-	glScalef( (GLfloat)Scale, (GLfloat)Scale, (GLfloat)Scale );
+	if (whichView == outside) {
+		if (Scale < MINSCALE)
+			Scale = MINSCALE;
+		glScalef((GLfloat)Scale, (GLfloat)Scale, (GLfloat)Scale);
+	};
 
 
 	// set the fog parameters:
@@ -388,9 +424,35 @@ Display( )
 	glEnable( GL_NORMALIZE );
 
 
-	// draw the box object by calling up its display list:
-
+	//======SHIP===========================================================
 	glCallList( ship );
+	//===== Stars =========================================================
+	//T
+		
+		int x = 10;
+		for (int y = 36; y < 1500; y++)
+		{
+
+			for (int i = 0; i < 25; i++)
+			{
+
+				glPushMatrix(); // spin!
+				glRotatef((y * i), 0.0, 0.0, 1.0);
+				glPushMatrix();
+				glTranslatef(0.0, 0.0, x);
+				glTranslatef(0.0, 5, Time * (-position * 3.0));
+				glColor3f(1.0, 1.0, 0.0);
+				glPointSize(1.0);
+				glBegin(GL_POINTS);
+				glVertex3f(0.0, 0.0, 0.0);
+				glEnd();
+				glPopMatrix();
+				glPopMatrix();//spin!
+			}
+
+
+			x++;
+		}
 
 #ifdef DEMO_Z_FIGHTING
 	if( DepthFightingOn != 0 )
@@ -1232,6 +1294,17 @@ Keyboard( unsigned char c, int x, int y )
 
 	switch( c )
 	{
+		//Use keyboard to switch views
+		case 'i':
+		case 'I':
+			whichView = inside;
+			break;
+
+		case 'u':
+		case 'U':
+			whichView = outside;
+			break;
+
 		case 'o':
 		case 'O':
 			WhichProjection = ORTHO;
@@ -1371,6 +1444,7 @@ Reset( )
 	WhichColor = WHITE;
 	WhichProjection = PERSP;
 	Xrot = Yrot = 0.;
+	whichView = outside;
 }
 
 
