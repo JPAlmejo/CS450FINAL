@@ -1021,7 +1021,29 @@ InitLists( )
 		OsuSphere(0.6, 100.0, 100.0);
 
 		//OsuCone(0.25, 0.0, 10.0, 100, 10);
+	//===============Engine!==================
+		glBegin(GL_QUAD_STRIP);
+			glColor3f(0.3, .3, .3);
+				glVertex3f(0.5, -5.0, 1.0);
+				glVertex3f(0.5, -5.0, -0.5);
+				glVertex3f(0.5, -4.0, 1.0);
+				glVertex3f(0.5, -4.0, -0.5);
 
+				glVertex3f(-0.5, -4.0, 1.0);
+				glVertex3f(-0.5, -4.0, -0.5);
+				glVertex3f(-0.5, -5.0, 1.0);
+				glVertex3f(-0.5, -5.0, -0.5);
+				glVertex3f(0.5, -5.0, 1.0);
+				glVertex3f(0.5, -5.0, -0.5);;
+
+
+				
+
+
+
+
+		
+		glEnd();
 	glEndList( );
 
 
