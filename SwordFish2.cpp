@@ -19,7 +19,11 @@
 //light sources
 //light global
 bool Light0On, Light1On, Light2On;
-
+bool stopAnim;
+bool Frozen;
+int dist= 250;
+unsigned char* Texture;	// the texels
+unsigned int    WorldTex;	// the texture object
 
 //=============Animate===============================
 //for animate functions
@@ -445,7 +449,9 @@ Display( )
 	glPopMatrix();
 	//===== Stars =========================================================
 	//T
-	glPushMatrix();
+	if (!stopAnim) //while aniamtion is not over
+	{
+		glutIdleFunc(Animate);
 		int x = 10;
 		for (int y = 36; y < 1500; y++)
 		{
@@ -466,12 +472,67 @@ Display( )
 				glPopMatrix();
 				glPopMatrix();//spin!
 			}
-
-
 			x++;
 		}
-	glPopMatrix();
-		glDisable(GL_LIGHTING);
+	}
+	else 
+	{
+		if (dist > 50)
+		{
+			int x = 10;
+			for (int y = 36; y < 750; y++)
+			{
+
+				for (int i = 0; i < 25; i++)
+				{
+
+					glPushMatrix(); // spin!
+					glRotatef((y * i), 0.0, 0.0, 1.0);
+					glPushMatrix();
+					glTranslatef(0.0, 0.0, x);
+					glTranslatef(0.0, 5, Time * (-position * 3.0));
+					glColor3f(1.0, 1.0, 1.0);
+					glPointSize(1.0);
+					glBegin(GL_POINTS);
+					glVertex3f(0.0, 0.0, 0.0);
+					glEnd();
+					glPopMatrix();
+					glPopMatrix();//spin!
+				}
+				x++;
+
+			}
+		}
+		if (dist > 20)
+		{
+
+			glPushMatrix();
+			glEnable(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, WorldTex);
+			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+			glTranslatef(0.0, 1.0, dist);
+			//glTranslatef(0.0, 0.0, -(100.0 * Time * 1.25));
+			OsuSphere(1.0, 100.0, 100.0);
+			glDisable(GL_TEXTURE_2D);
+			glPopMatrix();
+			dist--;
+		}
+		else if(dist == 20)
+		{
+			glPushMatrix();
+			glEnable(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, WorldTex);
+			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+			glTranslatef(0.0, 1.0, 28);
+			//glTranslatef(0.0, 0.0, -(100.0 * Time * 1.25));
+			OsuSphere(1.0, 100.0, 100.0);
+			glDisable(GL_TEXTURE_2D);
+			glPopMatrix();
+			dist = 250;
+			glutIdleFunc(NULL);
+	
+		}
+	}
 #ifdef DEMO_Z_FIGHTING
 	if( DepthFightingOn != 0 )
 	{
@@ -805,6 +866,24 @@ InitGraphics( )
 	// 	nothing it needs to respond to (which is most of the time)
 	// we don't need to do this for this program, and really should set the argument to NULL
 	// but, this sets us up nicely for doing animation
+
+		//Texture stuff added
+	int width, height;
+	Texture = BmpToTexture((char*)"worldtex.bmp", &width, &height);
+	if (Texture == NULL)
+		fprintf(stderr, "Cannot open texture '%s'\n", "worldtex.bmp");
+	else
+		fprintf(stderr, "Width = %d ; Height = %d\n", width, height);
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glGenTextures(1, &WorldTex);
+	glBindTexture(GL_TEXTURE_2D, WorldTex);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, Texture);
+
 
 	glutIdleFunc( Animate );
 
@@ -1312,7 +1391,20 @@ Keyboard( unsigned char c, int x, int y )
 
 	switch( c )
 	{
-		//Use keyboard to switch views
+
+		case 's':
+		case 'S':
+			if (stopAnim)
+			{
+				stopAnim = false;
+			}
+			else
+			{
+				stopAnim = true;
+			}
+		
+			break;
+
 		case 'i':
 		case 'I':
 			whichView = inside;
@@ -1451,6 +1543,7 @@ MouseMotion( int x, int y )
 void
 Reset( )
 {
+	stopAnim = false;
 	Light0On = Light1On = Light2On = false;
 	ActiveButton = 0;
 	AxesOn = 1;
@@ -1464,6 +1557,7 @@ Reset( )
 	WhichProjection = PERSP;
 	Xrot = Yrot = 0.;
 	whichView = outside;
+
 	
 }
 

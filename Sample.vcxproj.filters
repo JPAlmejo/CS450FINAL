@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="RAT.cpp">
+    <ClCompile Include="SwordFish2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
